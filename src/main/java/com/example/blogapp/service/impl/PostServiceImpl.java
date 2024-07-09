@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -27,12 +28,7 @@ public class PostServiceImpl implements PostService {
 
     private final CategoryRepository categoryRepository;
 
-    public PostServiceImpl(
-            PostRepository postRepository,
-            PostMapper postMapper,
-            UserRepo userRepo,
-            CategoryRepository categoryRepository
-    ) {
+    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, UserRepo userRepo, CategoryRepository categoryRepository) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.userRepo = userRepo;
@@ -43,11 +39,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto, Integer userId, Integer categoryId) {
 
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user", "userId", userId));
 
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("category", "categoryId", categoryId));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("category", "categoryId", categoryId));
 
         Post post = postMapper.INSTANCE.toPost(postDto);
         post.setImageName("default.png");
@@ -60,33 +54,56 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post updatePost(PostDto postDto, Integer postId) {
-        return null;
+    public PostDto updatePost(PostDto postDto, Integer postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("post", "postId", postId));
+        post.setContent(postDto.getContent());
+        post.setTitle(postDto.getTitle());
+        post.setAddedDate(new Date());
+        return PostMapper.INSTANCE.toPostDto(postRepository.save(post));
     }
 
     @Override
     public void deletePost(Integer postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("post", "postId", postId));
 
+        postRepository.deleteById(postId);
     }
 
     @Override
-    public List<Post> getAllPosts() {
-        return null;
+    public List<PostDto> getAllPosts() {
+        List<Post> postList = postRepository.findAll();
+
+        List<PostDto> postDto = postList.stream().map(PostMapper.INSTANCE::toPostDto).collect(Collectors.toList());
+
+        return postDto;
     }
 
     @Override
-    public Post getPostById(Integer postId) {
-        return null;
+    public PostDto getPostById(Integer postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("post", "postId", postId));
+
+        return PostMapper.INSTANCE.toPostDto(post);
     }
 
     @Override
-    public List<Post> getPostsByCategory(Integer categoryId) {
-        return null;
+    public List<PostDto> getPostsByCategory(Integer categoryId) {
+
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category", "CategoryID", categoryId));
+
+        List<Post> posts = postRepository.findByCategory(category);
+
+        List<PostDto> postDto = posts.stream().map(postMapper.INSTANCE::toPostDto).collect(Collectors.toList());
+        return postDto;
     }
 
     @Override
-    public List<Post> getPostsByUser(Integer userId) {
-        return null;
+    public List<PostDto> getPostsByUser(Integer userId) {
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+        List<Post> allByUser = postRepository.findByUser(user);
+
+        List<PostDto> postDto = allByUser.stream().map(postMapper.INSTANCE::toPostDto).collect(Collectors.toList());
+
+        return postDto;
     }
 
     @Override
