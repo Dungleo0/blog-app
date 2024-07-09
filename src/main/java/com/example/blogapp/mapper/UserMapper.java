@@ -2,25 +2,12 @@ package com.example.blogapp.mapper;
 
 import com.example.blogapp.dto.request.UserDto;
 import com.example.blogapp.entity.User;
+import org.mapstruct.Mapper;
 
 
-public class UserMapper {
-    public static User toUser(UserDto userDto) {
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
-        user.setAbout(userDto.getAbout());
-        return user;
-    }
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    User toUser(UserDto userDto);
 
-    public static UserDto toUserDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setName(user.getName());
-        userDto.setEmail(user.getEmail());
-        userDto.setAbout(user.getAbout());
-        return userDto;
-    }
+    UserDto toUserDto(User user);
 }

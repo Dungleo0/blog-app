@@ -1,6 +1,7 @@
 package com.example.blogapp.dto.request;
 
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class UserDto {
     private String password;
 
     @NotBlank(message = "email must not be blank")
+    @Email(message = "email is not valid")
     private String email;
 
     @NotBlank(message = "about must not be blank")

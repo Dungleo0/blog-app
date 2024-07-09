@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -30,5 +33,7 @@ public class User {
 
     private String about;
 
+    @OneToMany(mappedBy = "user")
+    private List<Post> users = new ArrayList<Post>();
 
 }
