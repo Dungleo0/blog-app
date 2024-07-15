@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,6 +36,10 @@ public class Post {
     private Category category;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<Comment> comments;
 
 }

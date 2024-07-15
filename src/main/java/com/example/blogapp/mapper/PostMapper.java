@@ -16,5 +16,6 @@ public interface PostMapper {
     Post toPost(PostDto postDto);
 
     @Mapping(source = "addedDate", target = "addedDate")
+//    @Mapping(source = "comments", target = "comments")
     PostDto toPostDto(Post post);
 }

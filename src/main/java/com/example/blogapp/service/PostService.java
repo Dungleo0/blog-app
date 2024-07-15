@@ -1,19 +1,20 @@
 package com.example.blogapp.service;
 
 import com.example.blogapp.dto.request.PostDto;
+import com.example.blogapp.dto.response.PageResponse;
 import com.example.blogapp.entity.Post;
 
 import java.util.List;
 
 public interface PostService {
 
-    PostDto createPost(PostDto postDto,Integer userId,Integer categoryId);
+    PostDto createPost(PostDto postDto, Integer userId, Integer categoryId);
 
     PostDto updatePost(PostDto postDto, Integer postId);
 
     void deletePost(Integer postId);
 
-    List<PostDto> getAllPosts();
+    PageResponse<PostDto> getAllPosts(Integer pageNo, Integer pageSize,String sortBy,String sortDir);
 
     PostDto getPostById(Integer postId);
 
@@ -21,5 +22,5 @@ public interface PostService {
 
     List<PostDto> getPostsByUser(Integer userId);
 
-    List<Post> searchPosts(String keywords);
+    List<PostDto> searchPosts(String keywords);
 }

@@ -34,6 +34,6 @@ public class User {
     private String about;
 
     @OneToMany(mappedBy = "user")
-    private List<Post> users = new ArrayList<Post>();
+    private List<Post> posts = new ArrayList<Post>();
 
 }
