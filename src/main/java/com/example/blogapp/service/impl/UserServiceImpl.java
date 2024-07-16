@@ -6,6 +6,7 @@ import com.example.blogapp.exception.ResourceNotFoundException;
 import com.example.blogapp.repository.UserRepo;
 import com.example.blogapp.service.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,18 +15,22 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    UserRepo userRepo;
-    ModelMapper mapper;
+    private final UserRepo userRepo;
+    private final ModelMapper mapper;
 
-    public UserServiceImpl(UserRepo userRepo, ModelMapper mapper) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepo userRepo, ModelMapper mapper, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.mapper = mapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
     @Override
     public UserDto createUser(UserDto userDto) {
         User user = mapper.map(userDto, User.class);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userRepo.save(user);
         return mapper.map(user, UserDto.class);
     }
@@ -34,7 +39,7 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto, Integer id) {
 
         User user = userRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-        user.setName(userDto.getName());
+        user.setUsername(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setAbout(userDto.getAbout());
 
